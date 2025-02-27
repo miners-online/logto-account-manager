@@ -1,6 +1,5 @@
-import { getLogtoContext, signIn, signOut } from '@logto/next/server-actions';
+import { getLogtoContext } from '@logto/next/server-actions';
 import { logtoConfig } from '@/lib/logto';
-import { ServerActionButton } from '@/components/server-action-button';
 
 import { AppSidebar } from "@/components/app-sidebar"
 import { Separator } from "@/components/ui/separator"
@@ -9,74 +8,21 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-
-
-// export default async function Home() {
-//   const { isAuthenticated, claims } = await getLogtoContext(logtoConfig);
-
-//   return (
-//     <>
-//       <nav>
-//         {isAuthenticated ? (
-//           <span>
-//             Hello, {claims?.sub},
-//             <ServerActionButton
-//               onClick={async () => {
-//                 'use server';
-
-//                 await signOut(logtoConfig);
-//               }}
-//             >
-//               Sign out
-//             </ServerActionButton>
-//           </span>
-//         ) : (
-//           <span>
-//             <ServerActionButton
-//               onClick={async () => {
-//                 'use server';
-
-//                 await signIn(logtoConfig);
-//               }}
-//             >
-//               Sign in
-//             </ServerActionButton>
-//           </span>
-//         )}
-//       </nav>
-//       <main>
-//       {claims && (
-//         <div>
-//           <h2>Claims:</h2>
-//           <table>
-//             <thead>
-//               <tr>
-//                 <th>Name</th>
-//                 <th>Value</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {Object.entries(claims).map(([key, value]) => (
-//                 <tr key={key}>
-//                   <td>{key}</td>
-//                   <td>{String(value)}</td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </table>
-//         </div>
-//       )}
-//     </main>
-//     </>
-//   )
-// }
+import { redirect } from 'next/navigation';
+import { User } from '@/lib/user';
 
 export default async function Page() {
   const { isAuthenticated, claims } = await getLogtoContext(logtoConfig);
 
+  if (!isAuthenticated) {
+    redirect('/api/signin');
+  }
+
+  const user = { isAuthenticated, claims } as User;
+
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar user={user} teams={undefined} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
