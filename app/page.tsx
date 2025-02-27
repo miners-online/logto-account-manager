@@ -2,8 +2,6 @@ import { getLogtoContext, signIn, signOut } from '@logto/next/server-actions';
 import { logtoConfig } from '@/lib/logto';
 import { ServerActionButton } from '@/components/server-action-button';
 
-export const runtime = 'edge';
-
 export default async function Home() {
   const { isAuthenticated, claims } = await getLogtoContext(logtoConfig);
 
